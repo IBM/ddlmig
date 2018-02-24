@@ -73,13 +73,142 @@ stogrouptemp=stogrouptemp|'/data/temp1' # The paths for temporary storage group.
 ```
 The initial size of the table space is calculated from the source database. This is an important step to allocate required space upfront so that Db2 and GPFS are not in conflict. This makes things faster for the data load. It is a good practice. The src.properties file has a paratemter `initialSizeIncrement` through which you can scale up or down the initial size calculation.
 
-DDL Migration
-=============
+## HPU Installation
+
+HPU needs to be installed on all hosts on source and target. Please make sure that the HPU version is same on all hosts on source and target.
+
+The example given here is on IBM Integrated Analytics System (IIAS).
+
+* Copy xinetd rpm somewhere on `/opt/ibm/appliance/storage/scratch` directory on host.
+
+* Copy HPU binary for the GA version and any fix pack available in the same directory on host.
+
+* Get into docker container
+
+ ```
+docker exec -it dashDB bash
+```
+* Optional: Create `runall` script and copy this to all hosts in the system. The example here is for one third rack which has 3 machines. The full rack will have 7 machines.
+
+```
+# cat /bin/runall
+#!/bin/bash
+
+NODES="node0101-fab node0102-fab node0103-fab"
+
+for host in $NODES
+do
+   echo Running command on $host
+   ssh $host "$@"
+done
+
+# chmod +x  /bin/runall
+# scp /bin/runall node0102-fab:/bin
+# scp /bin/runall node0103-fab:/bin
+```
+
+* Install xinetd and HPU on all hosts
+
+```
+# runall "rpm -ivh /scratch/xinetd-2.3.15-13.el7.ppc64le.rpm"			  
+# runall "systemctl enable xinetd"
+# runall "systemctl start xinetd"
+```
+## Install HPU on all hosts
+```
+# runall /scratch/hpu/HPU6100/install_hpu.sh -d /opt/ibm/HPU/V6.1 -s
+# runall /scratch/hpu/HPU6101/install_hpu.sh -d /opt/ibm/HPU/V6.1 -s
+```
+Add entries in `/etc/xinet.d/db2hpudm61` for better Performance
+```
+cps             = 5000 10
+instances       = 5000
+per_source      = 100
+```
+
+For example:
+
+```
+service db2hpudm61
+{
+    disable         = no
+    flags           = REUSE
+    socket_type     = stream
+    protocol        = tcp
+    wait            = no
+    user            = root
+    server          = /opt/ibm/HPU/V6.1/bin/db2hpudm
+    server_args     = --tophpu /opt/ibm/HPU/V6.1 --loglevel 3 --inetd --logfile /var/log/hpu/db2hpudm61.log
+    log_on_failure += USERID HOST
+    log_on_success += USERID PID HOST DURATION
+    cps             = 5000 10
+    instances       = 5000
+    per_source      = 100
+}
+```
+
+And, do not forget to add this to all hosts.
+
+```
+# scp /etc/xinetd.d/db2hpudm61 node0102-fab:/etc/xinetd.d/db2hpudm61
+# scp /etc/xinetd.d/db2hpudm61 node0103-fab:/etc/xinetd.d/db2hpudm61
+```
+
+Restart the service
+```
+# systemctl stop xinetd
+# systemctl start xinetd
+```
+
+Change owner of ``/opt/ibm/HPU/V6.1/cfg` directory on all hosts to the instance owner so that you do not have to depend upon root access
+```
+# runall "chown -R dbpemon.db2iadm1 /opt/ibm/HPU/V6.1/cfg"
+```
+Create softlink for db2hpu in bin
+```
+runall "ln -s /opt/ibm/HPU/V6.1/bin/db2hpu /bin/db2hpu"
+```
+Check the version
+```
+# runall "db2hpu -version"
+```
+Check the daemon running
+```
+# runall "netstat -a | grep -i hpu"
+```
+Login as you inside the container. Create `.db2hpu` in the home directory of user who is going to do the migration.
+```
+# su - db2psc
+$ mkdir .db2hpu
+$ cd .db2hpu
+$ touch db2hpu.creds
+$ db2hpu --credentials local
+INZM059I Optim High Performance Unload for DB2 for Linux, UNIX and Windows 06.01.00.001(170531)
+Management of credentials for 'local' type connections:
+  - do you want to create or remove data (1/2)? 1
+  - is it a new section (Y/N)? y
+  - provide a section name: db2inst1
+  - provide a user name: db2psc
+Do you want to validate your data (Y/N)? y
+INZM061I Credentials of connections created for 'db2inst1'
+```
+Do this on all hosts
+
+Create a map file so that HPU on host can map source to the target. Login as root
+```
+# cd /opt/ibm/HPU/V6.1/cfg
+# cat db2hpu.map
+node0101-fab=srchost401
+node0102-fab=srchost402
+node0103-fab=srchost403
+```
+The first entry is the host name of the target (as it is in db2nodes.cfg) and the second entry is the host name of the source machine.
+
+## DDL Migration
 
 `migr.sh` calls `com.ibm.migr.data.GenInitialObjects` and it expects source and database connection informations. The JDBC drivers must on the class path.
 
-HPU Migration
-=============
+## HPU Migration
 
 The Db2 High Performance Unload is used as this is the fastest method to unload and load data.
 
