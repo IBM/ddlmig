@@ -1,0 +1,11 @@
+/jdbc
+/bin
+/lib
+/output
+dash_c.lic
+datamigration.docx
+dstdb.properties
+edw5p1prod.properties
+migrkit.jar
+migrkit.zip
+ts.properties

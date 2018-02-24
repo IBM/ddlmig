@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="buildJar" name="migrkit">
+    <property name="target" value="1.8"/>
+    <property name="source" value="1.8"/>
+	<property name="lib.dir" value="./lib"/>
+    <path id="migrkit.classpath">
+        <pathelement location="bin"/>
+    	<!--path refid="JUnit 4.libraryclasspath"/-->
+        <pathelement location="./jdbc/db2jcc4.jar"/>
+        <pathelement location="./lib/jcommon-1.0.23.jar"/>
+        <pathelement location="./lib/jfreechart-1.0.19.jar"/>
+    </path>
+    <target name="init">
+        <mkdir dir="output"/>
+        <copy includeemptydirs="false" todir="output">
+            <fileset dir="src">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="output"/>
+    </target>
+    <target depends="init" name="build">
+    	<echo message="Using Java version ${ant.java.version}"/>
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true"  destdir="output" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="migrkit.classpath"/>
+        </javac>
+    </target>
+    <target name="buildJar" depends="build" description="Create Jar for distribution">    	
+	  	<echo message="Build migrkit.jar ..."/>
+    	<property name="version.num" value="2.00"/>
+    	<buildnumber file="build.num"/>
+		<jar jarfile="migrkit.jar" basedir="${basedir}/output">
+	      <manifest>
+	          <attribute name="Built-By" value="Vikram S Khatri"/>
+	          <attribute name="user-Email" value="vikram.khatri@us.ibm.com"/>
+	        <attribute name="Main-Class" value="com.ibm.migr.data.GenHPUScripts"/>
+	      	<attribute name="Implementation-Version" value="${version.num}-b${build.number}"/>
+	      </manifest>
+		  <zipgroupfileset dir="${lib.dir}" includes="**/*.jar" />		
+		</jar>
+    	<zip basedir="." destfile="migrkit.zip" includes="crypt.sh,migrkit.sh,migrkit.jar"/>
+    </target>	
+</project>

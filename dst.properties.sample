@@ -1,0 +1,19 @@
+# levels of logging are: 6,5,4,3,2,1 
+# NONE=6 ERROR=5 WARN=4 INFO=3 DEBUG=2 TRACE=1
+level=3
+server=<TargetDb2ServerIPAddress>
+port=<TargetDb2ServerPortNumber>
+dbname=<TargetDb2ServerDatabaseName>
+userid=<TargetDb2ServerUserID>
+password=<TargetDb2ServerEncryptedPassword> # Use crypt.sh
+autoCommit=true
+fetchSize=1000
+enableSysplexWLB=false
+CONNECTNODE=0
+currentSchema=<TargetDb2ServerCurrentSchemaName>
+applicationName=<WriteAnyNameYouLike>
+clientUser=<WriteAnyNameYouLike>
+clientAccountingInformation=<WriteAnyNameYouLike>
+clientHostname=<TargetDb2HostName>
+# If all schema required then specify ALL otherwise use comma separated list
+migrationSchemaList=<SchemaName>

@@ -1,0 +1,33 @@
+server=<IPAddressOfTheSourceDatabase>
+port=<DB2SourceDatabasePortNumber>
+dbname=<DB2SourceDatabaseName>
+userid=<DB2SourceDatabaseUserID>
+# You can also specify plain text password instead of encrypted password.
+# To generate the encrypted password, use crypt.sh to generate the encrypted password.
+password=<EncryptedDB2SourceDatabasePassword> # use utility crypt.sh to encrypt the password
+autoCommit=true
+fetchSize=1000
+enableSysplexWLB=false
+CONNECTNODE=0
+currentSchema=<DB2SourceDatabaseSchemaNameForMigration>
+applicationName=<ApplicationName-WriteAnyName>
+clientUser=<WriteAnyNameforClientUser>
+clientAccountingInformation=<WriteAnyNameforAccounting>
+clientHostname=<WriteSourceServerHostName>
+# If all schema required then specify ALL otherwise use comma separated list
+migrationSchemaList=<CommaSeparatedListofSchema|ALL>
+# Initial size increment - increase by a factor
+initialSizeIncrement=0.50 # This is the factor by which you would get the size of initial table space
+# How may target MLN are there
+targetMLNCount=<TotalNumberofDatabasePartitions> # Just count number of lines in db2nodes.cfg and that is MLN count
+# if bufferpool is defined, we will use this and not from the source
+dataBufferpool=BP_DATA_32K,32768 # Name of the data bufferpool and size
+idxBufferpool=BP_IDX_32K,32768 # Name of the index bufferpool and size
+tempBufferpool=BP_TEMP_32K,32768 # Name of the temporary bufferpool and size
+# extent of target tablespaces extent size
+extentSize=8
+# if mapdbpg is defined then we will use this and not from the source
+mapdbpg=ALLDATANODES:DATANODES:1,2,3,45,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52|SINGLEDATANODE:FIRSTHOST:0
+stogroupdata=stogroupdata|'/data/data1','/local/data1' # The paths for data storage group. Command separated list for multiple
+stogroupidx=stogroupidx|'/local/idx1' # The paths for index storage group. Command separated list for multiple
+stogrouptemp=stogrouptemp|'/data/temp1' # The paths for temporary storage group. Command separated list for multiple
