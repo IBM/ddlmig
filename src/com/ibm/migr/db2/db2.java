@@ -1,3 +1,6 @@
+/**
+ * Author Vikram Khatri
+ */
 package com.ibm.migr.db2;
 
 import static com.ibm.migr.utils.Log.*;

@@ -1,3 +1,6 @@
+/**
+ * Author Vikram Khatri
+ */
 package com.ibm.migr.db2;
 
 import java.util.ArrayList;
