@@ -6,7 +6,7 @@ This tool is used to migrate DDL and Data from a Db2 system to another Db2 syste
 
 1. The tool is designed to allow each partitioned and local indexes (as many as possible) will reside on their own table spaces on target Db2 System.
 2. Each non-partitioned index will reside on its own table space which will have name of index in the table space.
-3. The table space naming conventions are :
+3. The table space naming conventions are:
 
   * "SCHEMA_TABLE_DATA" for data and "SCHEMA_TABLE_IDX"  for index for local indexes.
   * "SCHEMA_TABLE_PARTNAME_DATA" for data
@@ -26,7 +26,7 @@ CREATE BUFFERPOOL BP_DATA_32K PAGESIZE 32768;
 CREATE BUFFERPOOL BP_IDX_32K PAGESIZE 32768;
 CREATE BUFFERPOOL BP_TEMP_32K PAGESIZE 32768;
 ```
-The name of the storage group and their mount points and buffer pools can be specified through src.properties file. For example:
+The name of the storage group and their mount points and buffer pools can be specified through `src.properties` file. For example:
 
 Note: These are the best practices and it is not necessary that you have to adhere to these. The tool is designed to make moving parts as less as possible and still gain maximum benefits.
 
@@ -71,7 +71,7 @@ stogroupdata=stogroupdata|'/data/data1','/local/data1' # The paths for data stor
 stogroupidx=stogroupidx|'/local/idx1' # The paths for index storage group. Command separated list for multiple
 stogrouptemp=stogrouptemp|'/data/temp1' # The paths for temporary storage group. Command separated list for multiple
 ```
-The initial size of the table space is calculated from the source database. This is an important step to allocate required space upfront so that Db2 and GPFS are not in conflict. This makes things faster for the data load. It is a good practice. The src.properties file has a paratemter `initialSizeIncrement` through which you can scale up or down the initial size calculation.
+The initial size of the table space is calculated from the source database. This is an important step to allocate required space upfront so that Db2 and GPFS are not in conflict. This makes things faster for the data load. It is a good practice. The `src.properties` file has a paratemter `initialSizeIncrement` through which you can scale up or down the initial size calculation.
 
 ## HPU Installation
 
@@ -160,11 +160,11 @@ Restart the service
 # systemctl start xinetd
 ```
 
-Change owner of ``/opt/ibm/HPU/V6.1/cfg` directory on all hosts to the instance owner so that you do not have to depend upon root access
+Change owner of `/opt/ibm/HPU/V6.1/cfg` directory on all hosts to the instance owner so that you do not have to depend upon root access
 ```
 # runall "chown -R dbpemon.db2iadm1 /opt/ibm/HPU/V6.1/cfg"
 ```
-Create softlink for db2hpu in bin
+Create softlink for `db2hpu` in `bin`
 ```
 runall "ln -s /opt/ibm/HPU/V6.1/bin/db2hpu /bin/db2hpu"
 ```
@@ -218,4 +218,4 @@ When HPU sends data from source to multiple targets using inetd/xinetd protocol,
 
 The HPU will repartition data on source and send the desired data to the target database partition so this method is the best when MLN topology is changing from source to the target.
 
-`hpumigr.sh` calls `com.ibm.migr.data.GenHPUScripts` and it will detect the source MLN and reads target MLN count from the src.properties and generates migration scripts with proper syntax.
+`hpumigr.sh` calls `com.ibm.migr.data.GenHPUScripts` and it will detect the source MLN and reads target MLN count from the `src.properties` and generates migration scripts with proper syntax.
