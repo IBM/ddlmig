@@ -115,11 +115,13 @@ done
 # runall "systemctl start xinetd"
 ```
 ## Install HPU on all hosts
+
+Assuming that you have copied HPU GA and Fixpack in /scratch/hpu
 ```
 # runall /scratch/hpu/HPU6100/install_hpu.sh -d /opt/ibm/HPU/V6.1 -s
 # runall /scratch/hpu/HPU6101/install_hpu.sh -d /opt/ibm/HPU/V6.1 -s
 ```
-Add entries in `/etc/xinet.d/db2hpudm61` for better Performance
+Add 3 entries in `/etc/xinet.d/db2hpudm61` for better Performance
 ```
 cps             = 5000 10
 instances       = 5000
@@ -164,6 +166,27 @@ Change owner of ``/opt/ibm/HPU/V6.1/cfg` directory on all hosts to the instance 
 ```
 # runall "chown -R dbpemon.db2iadm1 /opt/ibm/HPU/V6.1/cfg"
 ```
+
+Create, db2hpu.cfg file with the following parameters.
+
+```
+# HPU default configuration
+bufsize=xxxxxx
+db2dbdft=BLUDB
+db2instance=db2inst1
+doubledelim=binary
+netservice=db2hpudm61
+allow_unlimited_memory=yes
+keepalive_time=10
+maxthreads=8
+maxselects=10
+mig_pipe_timeout=60
+min_extent_per_thread=4
+use_stats=true
+nbcpu=8
+umask=022
+```
+
 Create softlink for db2hpu in bin
 ```
 runall "ln -s /opt/ibm/HPU/V6.1/bin/db2hpu /bin/db2hpu"
