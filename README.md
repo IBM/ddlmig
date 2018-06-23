@@ -6,7 +6,7 @@ This tool is used to migrate DDL and Data from a Db2 system to another Db2 syste
 
 1. The tool is designed to allow each partitioned and local indexes (as many as possible) will reside on their own table spaces on target Db2 System.
 2. Each non-partitioned index will reside on its own table space which will have name of index in the table space.
-3. The table space naming conventions are :
+3. The table space naming conventions are:
 
   * "SCHEMA_TABLE_DATA" for data and "SCHEMA_TABLE_IDX"  for index for local indexes.
   * "SCHEMA_TABLE_PARTNAME_DATA" for data
@@ -71,7 +71,7 @@ stogroupdata=stogroupdata|'/data/data1','/local/data1' # The paths for data stor
 stogroupidx=stogroupidx|'/local/idx1' # The paths for index storage group. Command separated list for multiple
 stogrouptemp=stogrouptemp|'/data/temp1' # The paths for temporary storage group. Command separated list for multiple
 ```
-The initial size of the table space is calculated from the source database. This is an important step to allocate required space upfront so that Db2 and GPFS are not in conflict. This makes things faster for the data load. It is a good practice. The src.properties file has a paratemter `initialSizeIncrement` through which you can scale up or down the initial size calculation.
+The initial size of the table space is calculated from the source database. This is an important step to allocate required space upfront so that Db2 and GPFS are not in conflict. This makes things faster for the data load. It is a good practice. The src.properties file has a parameter `initialSizeIncrement` through which you can scale up or down the initial size calculation.
 
 ## HPU Installation
 
@@ -116,7 +116,7 @@ done
 ```
 ## Install HPU on all hosts
 
-Assuming that you have copied HPU GA and Fixpack in /scratch/hpu
+Assuming that you have copied HPU GA and Fixpack in `/scratch/hpu`
 ```
 # runall /scratch/hpu/HPU6100/install_hpu.sh -d /opt/ibm/HPU/V6.1 -s
 # runall /scratch/hpu/HPU6101/install_hpu.sh -d /opt/ibm/HPU/V6.1 -s
@@ -162,12 +162,12 @@ Restart the service
 # systemctl start xinetd
 ```
 
-Change owner of ``/opt/ibm/HPU/V6.1/cfg` directory on all hosts to the instance owner so that you do not have to depend upon root access
+Change owner of `/opt/ibm/HPU/V6.1/cfg` directory on all hosts to the instance owner so that you do not have to depend upon root access
 ```
 # runall "chown -R dbpemon.db2iadm1 /opt/ibm/HPU/V6.1/cfg"
 ```
 
-Create, db2hpu.cfg file with the following parameters.
+Create, `db2hpu.cfg` file with the following parameters.
 
 ```
 # HPU default configuration
@@ -187,7 +187,7 @@ nbcpu=8
 umask=022
 ```
 
-Create softlink for db2hpu in bin
+Create softlink for db2hpu in `bin`
 ```
 runall "ln -s /opt/ibm/HPU/V6.1/bin/db2hpu /bin/db2hpu"
 ```
@@ -225,7 +225,7 @@ node0101-fab=srchost401
 node0102-fab=srchost402
 node0103-fab=srchost403
 ```
-The first entry is the host name of the target (as it is in db2nodes.cfg) and the second entry is the host name of the source machine.
+The first entry is the host name of the target (as it is in `db2nodes.cfg`) and the second entry is the host name of the source machine.
 
 ## DDL Migration
 
